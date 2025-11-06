@@ -102,6 +102,12 @@
     <Compile Include="Infrastructure\Logging\LogLevel.cs" />
     <Compile Include="Infrastructure\Logging\FileLogger.cs" />
     <Compile Include="Infrastructure\Utilities\MemoryCache.cs" />
+    <Compile Include="Presentation\Forms\BasketOrderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presentation\Forms\BasketOrderForm.Designer.cs">
+      <DependentUpon>BasketOrderForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Presentation\Forms\OrderBookForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,6 +208,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\icons8-search-24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-refresh-30.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

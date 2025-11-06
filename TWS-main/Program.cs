@@ -17,6 +17,7 @@ namespace TWS
         [STAThread]
         static void Main()
         {
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -25,6 +26,7 @@ namespace TWS
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             ServiceContainer container = null;
+
 
             try
             {
@@ -55,6 +57,8 @@ namespace TWS
                 // Cleanup
                 container?.Dispose();
             }
+
+            
         }
 
         private static void OnThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
