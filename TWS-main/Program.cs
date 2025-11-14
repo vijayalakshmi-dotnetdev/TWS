@@ -27,7 +27,9 @@ namespace TWS
 
             ServiceContainer container = null;
 
-
+            Application.Run(new OrderEntryForm());
+            
+            /**
             try
             {
                 // Initialize Dependency Injection
@@ -57,8 +59,8 @@ namespace TWS
                 // Cleanup
                 container?.Dispose();
             }
-
             
+            **/
         }
 
         private static void OnThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

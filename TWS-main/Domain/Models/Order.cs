@@ -190,13 +190,15 @@ namespace TWS.Domain.Models
         {
             INTRADAY,    // MIS
             DELIVERY,    // CNC
-            CARRYFORWARD // NRML
+            NORMAL,      // NRML
+            CARRYFORWARD // 
         }
 
         public enum ValidityType
         {
             DAY,
-            IOC
+            IOC,
+            GTD
         }
 
         public enum OrderStatus

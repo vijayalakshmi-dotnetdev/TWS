@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TWS.Domain.Models;
@@ -42,6 +43,11 @@ namespace TWS.Presentation.Forms
         private TextBox txtMEQty;
         private TextBox txtUserRemarks;
 
+        private ComboBox cmbSegment;
+        private ComboBox cmbTransactionType;
+        private NumericUpDown nudDisclosedQty;
+
+
         // Colors based on transaction type
         private static readonly Color BuyBackColor = Color.FromArgb(0, 80, 180);      // Blue
         private static readonly Color SellBackColor = Color.FromArgb(180, 40, 40);    // Red
@@ -49,10 +55,30 @@ namespace TWS.Presentation.Forms
         private static readonly Color TextBoxBackColor = Color.FromArgb(40, 40, 40);
         private static readonly Color TextColor = Color.FromArgb(240, 240, 240);
 
-        public OrderEntryForm(TransactionType transactionType, Scrip scrip = null)
+        //Product type mapping based on segment
+        private readonly Dictionary<string, string[]> _segmentToProducts = new Dictionary<string, string[]>
         {
+            { "CM", new[] { "INTRADAY", "DELIVERY" } },
+            { "FO", new[] { "NORMAL", "CARRYFORWARD" } },
+            { "CD", new[] { "NORMAL" } }
+        };
+
+        //Segment mapping based on exchange
+        private readonly Dictionary<string, string[]> _exchangeToSegments = new Dictionary<string, string[]>
+        {
+            { "NSE",  new[] { "CM", "FO", "CD" } },
+            { "BSE",  new[] { "CM", "FO", "CD" } },
+            { "MCX",  new[] { "FO" } },
+            { "NCDEX",new[] { "FO" } }
+        };
+        public OrderEntryForm(TransactionType transactionType = TransactionType.BUY, Scrip scrip = null)
+        {
+            /*
             _orderService = ServiceLocator.GetService<IOrderService>();
             _logger = ServiceLocator.GetService<ILogger>();
+            */
+
+
             _transactionType = transactionType;
             _scrip = scrip;
 
@@ -238,7 +264,7 @@ namespace TWS.Presentation.Forms
             this.Controls.AddRange(new Control[] { lblTitle, mainPanel, btnSubmit, btnClear });
         }
          
-         ***/
+         
 
         private void InitializeComponents()
         {
@@ -289,8 +315,7 @@ namespace TWS.Presentation.Forms
             };
 
             for (int i = 0; i < 13; i++)
-                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / 13));
-
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / 13));
             table.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
             table.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
             mainPanel.Controls.Add(table);
@@ -327,9 +352,9 @@ namespace TWS.Presentation.Forms
 
             //Exchange
             AddColumn(0, 0, "Exchange", cmbExchange = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
-            cmbExchange.Items.AddRange(new[] { "NSE", "BSE", "NFO", "MCX" });
+            cmbExchange.Items.AddRange(new[] { "NSE", "BSE", "MCX", "NCDEX" });
             cmbExchange.SelectedIndex = 0;
-
+            
             //Type
             AddColumn(1, 0, "Type", cmbSeries = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
             cmbSeries.Items.AddRange(new[] { "EQ","FUT", "OPT" });
@@ -492,6 +517,225 @@ namespace TWS.Presentation.Forms
             this.Controls.Add(bottomPanel);
         }
 
+        ***/
+
+
+        private void InitializeComponents()
+        {
+            // === Form Properties ===
+            this.Size = new Size(685, 200);
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.ShowInTaskbar = false;
+
+            // === Set colors based on transaction type ===
+            var themeColor = _transactionType == TransactionType.BUY ? BuyBackColor : SellBackColor;
+            this.BackColor = themeColor;
+            this.Text = $"{_transactionType} Order Entry";
+
+            // === Title Bar ===
+            lblTitle = new Label
+            {
+                Text = $"Derivatives {_transactionType} Order Entry Form",
+                Location = new Point(10, 10),
+                Size = new Size(600, 20),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = themeColor
+            };
+            this.Controls.Add(lblTitle);
+
+            // === Main Panel ===
+            var mainPanel = new Panel
+            {
+                Location = new Point(10, 40),
+                Size = new Size(650, 80),
+                BackColor = themeColor,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            this.Controls.Add(mainPanel);
+
+            // === Table Layout ===
+            var table = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 11,
+                RowCount = 2,
+                Padding = new Padding(5, 0, 5, 0),
+                BackColor = themeColor,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None
+            };
+
+            for (int i = 0; i < 7; i++)
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / 11));
+
+            table.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+            table.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+            mainPanel.Controls.Add(table);
+
+            // === Helper Function ===
+            void AddColumn(int col, int row, string labelText, Control control, int colspan = 1)
+            {
+                var panel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(1, 0, 1, 0) };
+
+                var lbl = new Label
+                {
+                    Text = labelText,
+                    ForeColor = Color.White,
+                    Dock = DockStyle.Top,
+                    Height = 13,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Font = new Font("Segoe UI", 8F)
+                };
+
+                control.Dock = DockStyle.Top;
+                control.Height = 21;
+                control.Margin = new Padding(0);
+                control.BackColor = Color.White;
+                control.Font = new Font("Segoe UI", 8.5F);
+
+                panel.Controls.Add(control);
+                panel.Controls.Add(lbl);
+                table.Controls.Add(panel, col, row);
+
+                if (colspan > 1)
+                    table.SetColumnSpan(panel, colspan);
+            }
+
+            // === Row 1 ===
+            AddColumn(0, 0, "Exchange", cmbExchange = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+            cmbExchange.Items.AddRange(new[] { "NSE", "BSE", "MCX", "NCDEX" });
+
+
+            AddColumn(1, 0, "Segment", cmbSegment = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+            cmbSegment.Items.AddRange(new[] { "CM", "FO", "CD" });
+
+
+            AddColumn(2, 0, "Symbol", txtSymbol = new TextBox());
+
+            AddColumn(3, 0, "Transaction Type", cmbTransactionType = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+            LoadEnumToComboBox<OrderEnums.TransactionType>(cmbTransactionType);
+            cmbTransactionType.SelectedIndex = 0;
+
+            AddColumn(4, 0, "Order Type", cmbOrderType = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+            LoadEnumToComboBox<OrderEnums.OrderType>(cmbOrderType);
+            cmbOrderType.SelectedIndex = 0;
+            cmbOrderType.SelectedIndexChanged += CmbOrderType_SelectedIndexChanged;
+
+            AddColumn(5, 0, "Product Type", cmbProductType = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+
+            AddColumn(6, 0, "Quantity", nudQuantity = new NumericUpDown
+            {
+                Minimum = 1,
+                Maximum = 100000,
+                Value = 1,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
+            });
+
+            cmbExchange.SelectedIndexChanged += CmbExchange_SelectedIndexChanged;
+            cmbSegment.SelectedIndexChanged += CmbSegment_SelectedIndexChanged;
+
+            // === Row 2 ===
+            AddColumn(0, 1, "Price", txtPrice = new TextBox { Text = "0.00" });
+
+            AddColumn(1, 1, "Trigger Price", txtTriggerPrice = new TextBox { Text = "0.00", Enabled = false });
+
+            AddColumn(2, 1, "Validity", cmbValidity = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+            LoadEnumToComboBox<OrderEnums.ValidityType>(cmbValidity);
+            cmbValidity.SelectedIndex = 0;
+
+            AddColumn(3, 1, "Disclosed Quantity", nudDisclosedQty = new NumericUpDown
+            {
+                Minimum = 0,
+                Maximum = 100000,
+                Value = 0,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
+            });
+
+
+            // === Buttons ===
+            btnSubmit = new Button
+            {
+                Text = "Submit",
+                Size = new Size(80, 24),
+                BackColor = Color.FromArgb(0, 150, 80),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnSubmit.FlatAppearance.BorderSize = 0;
+            btnSubmit.Click += BtnSubmit_Click;
+
+            btnClear = new Button
+            {
+                Text = "Clear",
+                Size = new Size(80, 24),
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnClear.FlatAppearance.BorderSize = 0;
+            btnClear.Click += BtnClear_Click;
+
+            var buttonPanel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.LeftToRight,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                Anchor = AnchorStyles.Right
+            };
+            buttonPanel.Controls.Add(btnSubmit);
+            buttonPanel.Controls.Add(btnClear);
+
+            table.Controls.Add(buttonPanel, 5, 1);
+            table.SetColumnSpan(buttonPanel, 3);
+
+            // === Bottom section: Message label ===
+            var bottomPanel = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 30,
+                BackColor = Color.WhiteSmoke,
+                Padding = new Padding(10, 5, 10, 5)
+            };
+
+            var lblMessageCaption = new Label
+            {
+                Text = "Message:",
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                ForeColor = Color.Black,
+                Location = new Point(10, 10)
+            };
+
+            lblMessage = new TextBox
+            {
+                Multiline = true,
+                Font = new Font("Segoe UI", 9F),
+                Size = new Size(350, 20),
+                Location = new Point(lblMessageCaption.Right + 2, 8),
+                ScrollBars = ScrollBars.Vertical,
+                BackColor = Color.White
+            };
+
+            bottomPanel.Controls.Add(lblMessageCaption);
+            bottomPanel.Controls.Add(lblMessage);
+            this.Controls.Add(bottomPanel);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            cmbExchange.SelectedIndex = 0;  // loads segment + product type
+        }
         private void cmbInstrName_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selectedInstr = cmbInstrName.SelectedItem?.ToString();
@@ -508,6 +752,42 @@ namespace TWS.Presentation.Forms
                 txtStrikePrice.Text = string.Empty;
                 cmbOptionType.SelectedIndex = -1;
             }
+        }
+
+        private void CmbExchange_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string exchange = cmbExchange.SelectedItem?.ToString();
+            if (cmbSegment == null)
+                return;
+            else
+                cmbSegment.Items.Clear();
+
+            if (exchange != null && _exchangeToSegments.TryGetValue(exchange, out var segments))
+            {
+                cmbSegment.Items.AddRange(segments);
+            }
+
+            cmbSegment.SelectedIndex = 0;
+        }
+        private void CmbSegment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string segment = cmbSegment.SelectedItem?.ToString();
+            if (cmbProductType == null) 
+                return;
+            else
+                cmbProductType.Items.Clear();
+
+            if (segment != null && _segmentToProducts.TryGetValue(segment, out var products))
+            {
+                cmbProductType.Items.AddRange(products);
+            }
+
+
+            cmbProductType.SelectedIndex = 0;
+        }
+        private void LoadEnumToComboBox<TEnum>(ComboBox comboBox) where TEnum : Enum
+        {
+            comboBox.DataSource = Enum.GetValues(typeof(TEnum));
         }
 
         private Label AddLabel(Control parent, string text, int x, int y, int width)
