@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using TWS.Domain.Models;
+using static TWS.Domain.Models.OrderEnums;
 
 namespace TWS.Presentation.Forms
 {
@@ -35,10 +37,12 @@ namespace TWS.Presentation.Forms
 
             // === ROW 1 ===
             Label lblTransType = MakeLabel("Trans Type", colPositions[0], topMargin);
-            ComboBox cbTransType = MakeComboBox("cbTransType", colPositions[0], topMargin + 20, colWidthsRow1[0], new[] { "BUY", "SELL" });
+            ComboBox cbTransType = MakeComboBox("cbTransType", colPositions[0], topMargin + 20, colWidthsRow1[0], null);
+            LoadEnumToComboBox<OrderEnums.TransactionType>(cbTransType);
+            cbTransType.SelectedIndex = 0;
 
             Label lblExchange = MakeLabel("Exchange", colPositions[1], topMargin);
-            ComboBox cbExchange = MakeComboBox("cbExchange", colPositions[1], topMargin + 20, colWidthsRow1[1], new[] { "NSE", "BSE" });
+            ComboBox cbExchange = MakeComboBox("cbExchange", colPositions[1], topMargin + 20, colWidthsRow1[1], new[] { "NSE", "BSE", "MCX", "NCDEX" });
 
             Label lblInstrument = MakeLabel("Instruments", colPositions[2], topMargin);
             ComboBox cbInstrument = MakeComboBox("cbInstrument", colPositions[2], topMargin + 20, colWidthsRow1[2], new[] { "EQ" });
@@ -357,6 +361,16 @@ namespace TWS.Presentation.Forms
 
         }
 
+        // === Helper method ===
+        private void LoadEnumToComboBox<T>(ComboBox combo)
+        {
+            combo.Items.Clear();
+            foreach (var value in Enum.GetValues(typeof(T)))
+            {
+                combo.Items.Add(value);
+            }
+        }
+
         // === EVENTS ===
         private void BtnAdd_Click(object sender, EventArgs e)
         {
@@ -630,8 +644,11 @@ namespace TWS.Presentation.Forms
                 Width = width,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cb.Items.AddRange(items);
-            cb.SelectedIndex = 0;
+            if (items != null)
+            {
+                cb.Items.AddRange(items);
+                cb.SelectedIndex = 0;
+            }
             return cb;
         }
 

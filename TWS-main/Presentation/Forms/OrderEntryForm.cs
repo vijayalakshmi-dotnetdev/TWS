@@ -785,9 +785,13 @@ namespace TWS.Presentation.Forms
 
             cmbProductType.SelectedIndex = 0;
         }
-        private void LoadEnumToComboBox<TEnum>(ComboBox comboBox) where TEnum : Enum
+        private void LoadEnumToComboBox<T>(ComboBox combo)
         {
-            comboBox.DataSource = Enum.GetValues(typeof(TEnum));
+            combo.Items.Clear();
+            foreach (var value in Enum.GetValues(typeof(T)))
+            {
+                combo.Items.Add(value);
+            }
         }
 
         private Label AddLabel(Control parent, string text, int x, int y, int width)
