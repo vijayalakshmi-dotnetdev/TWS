@@ -71,17 +71,12 @@ namespace TWS.Presentation.Forms
             { "MCX",  new[] { "FO" } },
             { "NCDEX",new[] { "FO" } }
         };
-        public OrderEntryForm(TransactionType transactionType = TransactionType.BUY, Scrip scrip = null)
+        public OrderEntryForm(TransactionType transactionType, Scrip scrip = null)
         {
-            /*
             _orderService = ServiceLocator.GetService<IOrderService>();
             _logger = ServiceLocator.GetService<ILogger>();
-            */
-
-
             _transactionType = transactionType;
             _scrip = scrip;
-
             InitializeComponents();
             LoadScripDetails();
         }

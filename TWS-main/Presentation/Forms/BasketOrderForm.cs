@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
 using TWS.Domain.Models;
 using static TWS.Domain.Models.OrderEnums;
@@ -10,6 +11,27 @@ namespace TWS.Presentation.Forms
 {
     public partial class BasketOrderForm : Form
     {
+        // UI Controls
+        private Label lblTransType;
+        private ComboBox cbTransType;
+        private ComboBox cbExchange;
+        private ComboBox cbInstrument;
+        private Panel pnlSymbol;
+        private ComboBox cbOptionType;
+        private ComboBox cbStrike;
+        private DateTimePicker dtExpiry;
+        private ComboBox cbDuration;
+        private TextBox txtMktProt;
+        private ComboBox cbProducts;
+        private ComboBox cbOrderType;
+        private TextBox txtQty;
+        private TextBox txtPrice;
+        private TextBox txtTrigger;
+        private TextBox txtDisc;
+        private Panel pnlAccount;
+        private Button btnSubmit;
+        private Button btnClear;
+        private CheckBox chkClientSet;
         public BasketOrderForm()
         {
             // === FORM SETTINGS ===
@@ -36,30 +58,30 @@ namespace TWS.Presentation.Forms
             }
 
             // === ROW 1 ===
-            Label lblTransType = MakeLabel("Trans Type", colPositions[0], topMargin);
-            ComboBox cbTransType = MakeComboBox("cbTransType", colPositions[0], topMargin + 20, colWidthsRow1[0], null);
+            lblTransType = MakeLabel("Trans Type", colPositions[0], topMargin);
+            cbTransType = MakeComboBox("cbTransType", colPositions[0], topMargin + 20, colWidthsRow1[0], null);
             LoadEnumToComboBox<OrderEnums.TransactionType>(cbTransType);
             cbTransType.SelectedIndex = 0;
 
             Label lblExchange = MakeLabel("Exchange", colPositions[1], topMargin);
-            ComboBox cbExchange = MakeComboBox("cbExchange", colPositions[1], topMargin + 20, colWidthsRow1[1], new[] { "NSE", "BSE", "MCX", "NCDEX" });
+            cbExchange = MakeComboBox("cbExchange", colPositions[1], topMargin + 20, colWidthsRow1[1], new[] { "NSE", "BSE", "MCX", "NCDEX" });
 
             Label lblInstrument = MakeLabel("Instruments", colPositions[2], topMargin);
-            ComboBox cbInstrument = MakeComboBox("cbInstrument", colPositions[2], topMargin + 20, colWidthsRow1[2], new[] { "EQ" });
+            cbInstrument = MakeComboBox("cbInstrument", colPositions[2], topMargin + 20, colWidthsRow1[2], new[] { "EQ" });
 
             Label lblSymbol = MakeLabel("Symbol", colPositions[3], topMargin);
-            Panel pnlSymbol = MakeSearchPanel("pnlSymbol", colPositions[3], topMargin + 20, colWidthsRow1[3], "");
+            pnlSymbol = MakeSearchPanel("pnlSymbol", colPositions[3], topMargin + 20, colWidthsRow1[3], "");
 
             Label lblOptionType = MakeLabel("Option Type", colPositions[4], topMargin);
-            ComboBox cbOptionType = MakeComboBox("cbOptionType", colPositions[4], topMargin + 20, colWidthsRow1[4], new[] { "CE", "PE" });
+            cbOptionType = MakeComboBox("cbOptionType", colPositions[4], topMargin + 20, colWidthsRow1[4], new[] { "CE", "PE" });
 
             Label lblStrike = MakeLabel("Strike Price", colPositions[5], topMargin);
-            ComboBox cbStrike = MakeComboBox("cbStrike", colPositions[5], topMargin + 20, colWidthsRow1[5],
+            cbStrike = MakeComboBox("cbStrike", colPositions[5], topMargin + 20, colWidthsRow1[5],
                 new[] { "1500", "1600", "1700", "1800", "1900" });
             cbStrike.SelectedIndex = 2;
 
             Label lblExpiry = MakeLabel("Expiry Date", colPositions[6], topMargin);
-            DateTimePicker dtExpiry = new DateTimePicker
+            dtExpiry = new DateTimePicker
             {
                 Name = "dtExpiry",
                 Location = new Point(colPositions[6], topMargin + 20),
@@ -68,10 +90,10 @@ namespace TWS.Presentation.Forms
             };
 
             Label lblDuration = MakeLabel("Duration", colPositions[7], topMargin);
-            ComboBox cbDuration = MakeComboBox("cbDuration", colPositions[7], topMargin + 20, colWidthsRow1[7], new[] { "DAY", "IOC" });
+            cbDuration = MakeComboBox("cbDuration", colPositions[7], topMargin + 20, colWidthsRow1[7], new[] { "DAY", "IOC" });
 
             Label lblMktProt = MakeLabel("MKT Prot%", colPositions[8], topMargin);
-            TextBox txtMktProt = MakeTextBox("txtMktProt", colPositions[8], topMargin + 20, colWidthsRow1[8], "0");
+            txtMktProt = MakeTextBox("txtMktProt", colPositions[8], topMargin + 20, colWidthsRow1[8], "0");
 
             Controls.AddRange(new Control[]
             {
@@ -90,27 +112,29 @@ namespace TWS.Presentation.Forms
             topMargin += 50;
 
             Label lblProducts = MakeLabel("Products", colPositions[0], topMargin);
-            ComboBox cbProducts = MakeComboBox("cbProducts", colPositions[0], topMargin + 20, colWidthsRow2[0], new[] { "MIS", "CNC" });
+            cbProducts = MakeComboBox("cbProducts", colPositions[0], topMargin + 20, colWidthsRow2[0], new[] { "MIS", "CNC" });
 
             Label lblOrderType = MakeLabel("Order Type", colPositions[1], topMargin);
-            ComboBox cbOrderType = MakeComboBox("cbOrderType", colPositions[1], topMargin + 20, colWidthsRow2[1], new[] { "LMT", "MKT" });
+            cbOrderType = MakeComboBox("cbOrderType", colPositions[1], topMargin + 20, colWidthsRow2[1],null);
+            LoadEnumToComboBox<OrderEnums.OrderType>(cbOrderType);
+            cbOrderType.SelectedIndex = 0;
 
             Label lblQty = MakeLabel("Qty", colPositions[2], topMargin);
-            TextBox txtQty = MakeTextBox("txtQty", colPositions[2], topMargin + 20, colWidthsRow2[2], "1");
+            txtQty = MakeTextBox("txtQty", colPositions[2], topMargin + 20, colWidthsRow2[2], "1");
 
             Label lblPrice = MakeLabel("Price", colPositions[3], topMargin);
-            TextBox txtPrice = MakeTextBox("txtPrice", colPositions[3], topMargin + 20, colWidthsRow2[3], "");
+            txtPrice = MakeTextBox("txtPrice", colPositions[3], topMargin + 20, colWidthsRow2[3], "");
 
             Label lblTrigger = MakeLabel("Trigger Price", colPositions[4], topMargin);
-            TextBox txtTrigger = MakeTextBox("txtTrigger", colPositions[4], topMargin + 20, colWidthsRow2[4], "");
+            txtTrigger = MakeTextBox("txtTrigger", colPositions[4], topMargin + 20, colWidthsRow2[4], "");
 
             Label lblDisc = MakeLabel("Disc Qty", colPositions[5], topMargin);
-            TextBox txtDisc = MakeTextBox("txtDisc", colPositions[5], topMargin + 20, colWidthsRow2[5], "0");
+            txtDisc = MakeTextBox("txtDisc", colPositions[5], topMargin + 20, colWidthsRow2[5], "0");
 
             Label lblAccount = MakeLabel("Account", colPositions[6], topMargin);
-            Panel pnlAccount = MakeSearchPanel("pnlAccount", colPositions[6], topMargin + 20, colWidthsRow2[6], "");
+            pnlAccount = MakeSearchPanel("pnlAccount", colPositions[6], topMargin + 20, colWidthsRow2[6], "");
 
-            CheckBox chkClientSet = new CheckBox
+            chkClientSet = new CheckBox
             {
                 Text = "ClientSet",
                 AutoSize = true,
@@ -204,8 +228,8 @@ namespace TWS.Presentation.Forms
                 BackColor = Color.White,
                 Cursor = Cursors.Hand,
                 Image = resetIcon,
-                ImageAlign = ContentAlignment.MiddleLeft,
-                TextAlign = ContentAlignment.MiddleRight,
+                ImageAlign = System.Drawing.ContentAlignment.MiddleLeft,
+                TextAlign = System.Drawing.ContentAlignment.MiddleRight,
                 Padding = new Padding(0, 0, 0, 0),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold) // Bold font
             };
@@ -314,7 +338,7 @@ namespace TWS.Presentation.Forms
                 AutoSize = false,
                 Location = new Point(10, 2),
                 Size = new Size(pnlFooter.Width / 4 - 10, footerHeight - 4),
-                TextAlign = ContentAlignment.MiddleLeft,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.Blue
             };
@@ -325,7 +349,7 @@ namespace TWS.Presentation.Forms
                 AutoSize = false,
                 Location = new Point(pnlFooter.Width / 4 + 10, 2),
                 Size = new Size(pnlFooter.Width / 4 - 10, footerHeight - 4),
-                TextAlign = ContentAlignment.MiddleLeft,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.Blue
             };
@@ -336,7 +360,7 @@ namespace TWS.Presentation.Forms
                 AutoSize = false,
                 Location = new Point(pnlFooter.Width / 2 + 10, 2),
                 Size = new Size(pnlFooter.Width / 4 - 10, footerHeight - 4),
-                TextAlign = ContentAlignment.MiddleLeft,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.Red
             };
@@ -347,7 +371,7 @@ namespace TWS.Presentation.Forms
                 AutoSize = false,
                 Location = new Point(pnlFooter.Width * 3 / 4 + 10, 2),
                 Size = new Size(pnlFooter.Width / 4 - 10, footerHeight - 4),
-                TextAlign = ContentAlignment.MiddleLeft,
+                TextAlign = System.Drawing.ContentAlignment.MiddleLeft,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.Red
             };
@@ -374,51 +398,59 @@ namespace TWS.Presentation.Forms
         // === EVENTS ===
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            // Get references to the relevant controls
-            DataGridView dgv = Controls["dataGridView1"] as DataGridView;
-            if (dgv == null)
+            // Validate inputs
+            if (!ValidateInputs())
             {
-                dgv = null;
-                foreach (Control ctrl in Controls)
-                    if (ctrl is DataGridView grid)
-                        dgv = grid;
-            }
-
-            if (dgv == null)
-            {
-                MessageBox.Show("Grid not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            else
+            {
+                // Get references to the relevant controls
+                DataGridView dgv = Controls["dataGridView1"] as DataGridView;
+                if (dgv == null)
+                {
+                    dgv = null;
+                    foreach (Control ctrl in Controls)
+                        if (ctrl is DataGridView grid)
+                            dgv = grid;
+                }
 
-            // Collect values from the UI
-            string exchange = ((ComboBox)Controls.Find("cbExchange", true)[0]).Text;
-            string instrument = ((ComboBox)Controls.Find("cbInstrument", true)[0]).Text;
-            string optionType = ((ComboBox)Controls.Find("cbOptionType", true)[0]).Text;
-            string strike = ((ComboBox)Controls.Find("cbStrike", true)[0]).Text;
-            string transType = ((ComboBox)Controls.Find("cbTransType", true)[0]).Text;
-            string products = ((ComboBox)Controls.Find("cbProducts", true)[0]).Text;
-            string orderType = ((ComboBox)Controls.Find("cbOrderType", true)[0]).Text;
-            string duration = ((ComboBox)Controls.Find("cbDuration", true)[0]).Text;
+                if (dgv == null)
+                {
+                    MessageBox.Show("Grid not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-            // Panels (symbol/account)
-            Panel pnlSymbol = Controls.Find("pnlSymbol", true)[0] as Panel;
-            Panel pnlAccount = Controls.Find("pnlAccount", true)[0] as Panel;
-            string symbol = ((TextBox)pnlSymbol.Controls[0]).Text;
-            string account = ((TextBox)pnlAccount.Controls[0]).Text;
+                // Collect values from the UI
+                string exchange = ((ComboBox)Controls.Find("cbExchange", true)[0]).Text;
+                string instrument = ((ComboBox)Controls.Find("cbInstrument", true)[0]).Text;
+                string optionType = ((ComboBox)Controls.Find("cbOptionType", true)[0]).Text;
+                string strike = ((ComboBox)Controls.Find("cbStrike", true)[0]).Text;
+                string transType = ((ComboBox)Controls.Find("cbTransType", true)[0]).Text;
+                string products = ((ComboBox)Controls.Find("cbProducts", true)[0]).Text;
+                string orderType = ((ComboBox)Controls.Find("cbOrderType", true)[0]).Text;
+                string duration = ((ComboBox)Controls.Find("cbDuration", true)[0]).Text;
 
-            // Textboxes
-            string price = ((TextBox)Controls.Find("txtPrice", true)[0]).Text;
-            string qty = ((TextBox)Controls.Find("txtQty", true)[0]).Text;
-            string trigger = ((TextBox)Controls.Find("txtTrigger", true)[0]).Text;
-            string disc = ((TextBox)Controls.Find("txtDisc", true)[0]).Text;
-            string remarks = ((TextBox)Controls.Find("txtRemarks", true)[0]).Text;
-            string mktProt = ((TextBox)Controls.Find("txtMktProt", true)[0]).Text;
-            string expiry = ((DateTimePicker)Controls.Find("dtExpiry", true)[0]).Text;
+                // Panels (symbol/account)
+                Panel pnlSymbol = Controls.Find("pnlSymbol", true)[0] as Panel;
+                Panel pnlAccount = Controls.Find("pnlAccount", true)[0] as Panel;
+                string symbol = ((TextBox)pnlSymbol.Controls[0]).Text;
+                string account = ((TextBox)pnlAccount.Controls[0]).Text;
 
-            // Add row to DataGridView
-            dgv.Rows.Add(exchange, instrument, symbol, optionType, strike, expiry, account,
-                transType, "C", products, orderType, duration, price, qty, trigger, disc,
-                remarks, mktProt, "", "");
+                // Textboxes
+                string price = ((TextBox)Controls.Find("txtPrice", true)[0]).Text;
+                string qty = ((TextBox)Controls.Find("txtQty", true)[0]).Text;
+                string trigger = ((TextBox)Controls.Find("txtTrigger", true)[0]).Text;
+                string disc = ((TextBox)Controls.Find("txtDisc", true)[0]).Text;
+                string remarks = ((TextBox)Controls.Find("txtRemarks", true)[0]).Text;
+                string mktProt = ((TextBox)Controls.Find("txtMktProt", true)[0]).Text;
+                string expiry = ((DateTimePicker)Controls.Find("dtExpiry", true)[0]).Text;
+
+                // Add row to DataGridView
+                dgv.Rows.Add(exchange, instrument, symbol, optionType, strike, expiry, account,
+                    transType, "C", products, orderType, duration, price, qty, trigger, disc,
+                    remarks, mktProt, "", "");
+            }
         }
 
         private void BtnReset_Click(object sender, EventArgs e)
@@ -442,7 +474,43 @@ namespace TWS.Presentation.Forms
 
         private void btnPlace_Click(object sender, EventArgs e)
         {
+            // Validate inputs
+            if (!ValidateInputs())
+            {
+                return;
+            }
         }
+
+        private bool ValidateInputs()
+        {
+            if (string.IsNullOrWhiteSpace(pnlSymbol.Text))
+            {
+                MessageBox.Show("Symbol is required", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (Convert.ToInt32(txtQty.Text) <= 0)
+            {
+                MessageBox.Show("Quantity must be greater than 0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            var orderType = cbOrderType.SelectedItem?.ToString();
+            if ((orderType == "LIMIT" || orderType == "SL") && !decimal.TryParse(txtPrice.Text, out var price))
+            {
+                MessageBox.Show("Valid price is required for limit orders", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if ((orderType == "SL" || orderType == "SL-M") && !decimal.TryParse(txtTrigger.Text, out var triggerPrice))
+            {
+                MessageBox.Show("Valid trigger price is required for stop loss orders", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return true;
+        }
+
 
         private void CbBasketFile_SelectedIndexChanged(object sender, EventArgs e)
         {
