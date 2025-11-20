@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using TWS.Domain.Models;
 using TWS.Infrastructure.DependencyInjection;
 using TWS.Infrastructure.Logging;
+using TWS.Services;
 using TWS.Services.Interfaces;
 using static TWS.Domain.Models.OrderEnums;
 
@@ -843,16 +844,16 @@ namespace TWS.Presentation.Forms
                 try
                 {
                     // Set series based on instrument type
-                    if (_scrip.InstrumentType.Contains("FUT"))
-                        cmbSeries.SelectedItem = "FUT";
-                    else if (_scrip.InstrumentType.Contains("OPT"))
-                        cmbSeries.SelectedItem = "OPT";
-                    else
-                        cmbSeries.SelectedItem = "EQ";
+                    //if (_scrip.InstrumentType.Contains("FUT"))
+                    //    cmbSeries.SelectedItem = "FUT";
+                    //else if (_scrip.InstrumentType.Contains("OPT"))
+                    //    cmbSeries.SelectedItem = "OPT";
+                    //else
+                    //    cmbSeries.SelectedItem = "EQ";
                 }
                 catch (Exception ex)
                 {
-                    cmbSeries.SelectedItem = "EQ";
+                    //cmbSeries.SelectedItem = "EQ";
                 }
             }
         }
@@ -897,7 +898,8 @@ namespace TWS.Presentation.Forms
                 var orderRequest = CreateOrderRequest();
 
                 // Place order
-                var response = await _orderService.PlaceOrderAsync(orderRequest);
+                //var response = await _orderService.PlaceOrderAsync(orderRequest);
+                var response = await _orderService.PlaceTcpOrderAsync(orderRequest);
 
                 if (response?.Status == "Ok")
                 {

@@ -13,6 +13,7 @@ namespace TWS.Services.Interfaces
         /// Places a new order
         /// </summary>
         Task<PlaceOrderResult> PlaceOrderAsync(OrderRequest request);
+        Task<PlaceOrderResult> PlaceTcpOrderAsync(OrderRequest request);
 
         /// <summary>
         /// Modifies an existing order

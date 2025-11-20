@@ -8,6 +8,7 @@ using TWS.Domain.Models;
 using TWS.Infrastructure.Configuration;
 using TWS.Infrastructure.Logging;
 using TWS.Services.Interfaces;
+using static TWS.Services.TCPConnectionHelper;
 
 namespace TWS.Services
 {
@@ -21,6 +22,7 @@ namespace TWS.Services
         private readonly IAuthenticationService _authService;
         private readonly IConfigurationService _configService;
         private readonly string _baseUrl;
+        private readonly TcpConnectionManager _tcpManager;
 
         public OrderService(
             HttpClient httpClient,
@@ -33,6 +35,7 @@ namespace TWS.Services
             _configService = configService;
             _authService = authService; // ← Store it
             _baseUrl = _configService.GetValue<string>("ApiEndpoints:BaseUrl");
+            _tcpManager = new TcpConnectionManager("127.0.0.1", 7004);
         }
 
         /// <summary>
@@ -130,6 +133,26 @@ namespace TWS.Services
         /// Modifies an existing order
         /// Endpoint: POST /orders/modify
         /// </summary>
+        /// 
+        public async Task<PlaceOrderResult> PlaceTcpOrderAsync(OrderRequest request)
+        {
+            var requestPacket = new
+            {
+                PacketType = "PLACE_ORDER",
+                Data = request
+            };
+
+            var json = JsonSerializer.Serialize(requestPacket);
+
+            string rawResponse = await _tcpManager.SendAndReceiveAsync(json);
+
+            var result = JsonSerializer.Deserialize<PlaceOrderResult>(rawResponse, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return result;
+        }
         public async Task<ModifyOrderResult> ModifyOrderAsync(ModifyOrderRequest request)
         {
             try
