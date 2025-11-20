@@ -841,6 +841,7 @@ namespace TWS.Presentation.Forms
             {
                 txtSymbol.Text = _scrip.Symbol;
                 cmbExchange.SelectedItem = _scrip.Exchange;
+                /*
                 try
                 {
                     // Set series based on instrument type
@@ -855,6 +856,7 @@ namespace TWS.Presentation.Forms
                 {
                     //cmbSeries.SelectedItem = "EQ";
                 }
+                */
             }
         }
 
